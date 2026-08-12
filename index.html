@@ -434,6 +434,31 @@
       </div>
 
       <p class="ending-line">Thank you for reading it all.</p>
+
+      <div class="voice-note-card" id="voiceNoteCard">
+        <div class="voice-topline">
+          <span class="voice-dot"></span>
+          <span class="voice-label">ONE LAST LITTLE THING</span>
+          <span class="voice-time" id="voiceTime">00:00</span>
+        </div>
+        <button id="voicePlay" class="voice-play" type="button" aria-label="Play voice note">
+          <span class="voice-play-icon">▶</span>
+        </button>
+        <div class="voice-middle">
+          <div class="voice-title">A voice note… just for you.</div>
+          <div class="voice-subtitle">listen till the end ♡</div>
+        </div>
+        <div class="voice-wave" id="voiceWave" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="voice-progress"><span id="voiceProgress"></span></div>
+        <div class="voice-note-hint" id="voiceHint">press play — Barbaad will softly pause here</div>
+      </div>
+
+      <audio id="voiceNote" preload="metadata">
+        <source src="assets/my-voice.mp3" type="audio/mpeg">
+      </audio>
+
       <div class="final-seal">♡</div>
     </section>
   </main>
