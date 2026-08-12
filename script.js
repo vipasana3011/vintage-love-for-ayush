@@ -1,111 +1,278 @@
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => [...document.querySelectorAll(s)];
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-const music = $("#bgMusic");
-const musicControl = $("#musicControl");
-const musicText = $("#musicText");
+const music = $('#bgMusic');
+const musicButton = $('#musicButton');
+const musicLabel = $('#musicLabel');
+const toast = $('#toast');
 
-function setMusicUI() {
-  const playing = !music.paused;
-  musicControl.classList.toggle("playing", playing);
-  musicText.textContent = playing ? "♫ Barbaad · playing" : "♫ Barbaad · paused";
-  musicControl.setAttribute("aria-label", playing ? "Pause music" : "Play music");
+/*
+  EMAIL SETUP:
+  Replace YOUR_EMAIL_HERE with the email address where you want every answer.
+  FormSubmit will ask you to confirm the address the first time.
+  Example:
+  const ANSWER_ENDPOINT = 'https://formsubmit.co/ajax/you@example.com';
+*/
+const ANSWER_ENDPOINT = 'https://formsubmit.co/ajax/vipasana3011@gmail.com';
+
+let musicStarted = false;
+let current = 0;
+let sending = false;
+const pages = $$('.story-page');
+const total = pages.length;
+
+function show(id) {
+  ['cover','interlude','memory','reaction','story','ending'].forEach(name => {
+    const el = document.getElementById(name);
+    el.classList.toggle('hidden', name !== id);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
 }
-async function playMusic() {
+
+function toastMessage(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(window.__toast);
+  window.__toast = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+function updateMusic() {
+  const playing = !music.paused;
+  musicButton.classList.toggle('playing', playing);
+  musicLabel.textContent = playing ? 'Barbaad · playing' : 'sound off';
+}
+
+async function startMusic() {
   try {
     await music.play();
-  } catch (_) {
-    musicText.textContent = "♫ Music is optional";
+    musicStarted = true;
+    updateMusic();
+    return true;
+  } catch (error) {
+    updateMusic();
+    toastMessage('Music could not start — make sure assets/Barbaad.mp3 is in the repo.');
+    return false;
   }
-  setMusicUI();
 }
-music.addEventListener("play", setMusicUI);
-music.addEventListener("pause", setMusicUI);
-musicControl.addEventListener("click", async () => {
-  if (music.paused) await playMusic();
+
+music.addEventListener('play', updateMusic);
+music.addEventListener('pause', updateMusic);
+music.addEventListener('error', () => toastMessage('I cannot find Barbaad.mp3 in the assets folder.'));
+
+musicButton.addEventListener('click', async () => {
+  if (music.paused) await startMusic();
   else music.pause();
 });
 
-function showOnly(id) {
-  ["intro","rule","doors","letterExperience","ending"].forEach(x => {
-    const el = document.getElementById(x);
-    el.classList.toggle("hidden", x !== id);
-  });
-  window.scrollTo({top:0, behavior:"smooth"});
+// Cover: SAME user click starts audio + opens. No fragile second click.
+async function openCover() {
+  const cover = $('#cover');
+  cover.classList.add('opening');
+  await startMusic();
+  setTimeout(() => show('interlude'), 700);
 }
+$('#beginButton').addEventListener('click', openCover);
+$('#sealButton').addEventListener('click', openCover);
+$('#beginStory').addEventListener('click', () => show('memory'));
 
-$("#openBtn").addEventListener("click", async () => {
-  await playMusic();
-  showOnly("rule");
+// Polaroid
+$('#polaroid').addEventListener('click', () => {
+  $('#polaroid').classList.add('opened');
+  $('#memoryReveal').classList.add('show');
 });
-$("#okayBtn").addEventListener("click", () => showOnly("doors"));
-
-let openedDoors = 0;
-const doorReveal = $("#doorReveal");
-$$(".door").forEach(btn => {
-  btn.addEventListener("click", () => {
-    doorReveal.textContent = btn.dataset.note;
-    doorReveal.classList.add("show");
-    if (!btn.dataset.opened) {
-      btn.dataset.opened = "true";
-      openedDoors++;
-    }
-    if (openedDoors >= 2) $("#startLetter").classList.remove("hidden");
-  });
-});
-$("#startLetter").addEventListener("click", () => {
-  showOnly("letterExperience");
-  activatePage(0);
+$('#memoryContinue').addEventListener('click', () => {
+  show('reaction');
+  setReaction(0);
 });
 
+// Instagram-like reaction slider: drag/tap anywhere on the bar.
+const reactionTrack = $('#reactionTrack');
+const reactionFill = $('#reactionFill');
+const reactionKnob = $('#reactionKnob');
+const reactionGlow = $('#reactionGlow');
+const reactionPercent = $('#reactionPercent');
+const reactionEmoji = $('#reactionEmoji');
+const reactionMessage = $('#reactionMessage');
+const reactionContinue = $('#reactionContinue');
+let reactionValue = 0;
+let draggingReaction = false;
 
-const polaroid = $("#polaroid");
-const memoryReveal = $("#memoryReveal");
-polaroid.addEventListener("click", () => {
-  polaroid.classList.add("opened");
-  memoryReveal.classList.add("show");
+function emojiForReaction(v) {
+  if (v < 20) return '🙂';
+  if (v < 40) return '😊';
+  if (v < 60) return '🥰';
+  if (v < 80) return '😍';
+  if (v < 95) return '🤭';
+  return '🫠';
+}
+function messageForReaction(v) {
+  if (v < 15) return 'slide the little heart →';
+  if (v < 35) return 'okayyy… a tiny smile?';
+  if (v < 55) return 'hmm… I’ll take that ♡';
+  if (v < 75) return 'okay, now we are talking…';
+  if (v < 95) return 'stoppp, you actually liked it 😭';
+  return '100%?! I knew it. ♡';
+}
+function setReaction(value) {
+  reactionValue = Math.max(0, Math.min(100, Math.round(value)));
+  reactionPercent.textContent = reactionValue + '%';
+  reactionFill.style.width = reactionValue + '%';
+  reactionKnob.style.left = reactionValue + '%';
+  reactionGlow.style.left = reactionValue + '%';
+  reactionGlow.style.opacity = reactionValue ? '.9' : '0';
+  const emoji = emojiForReaction(reactionValue);
+  reactionKnob.textContent = emoji;
+  reactionEmoji.textContent = emoji;
+  reactionMessage.textContent = messageForReaction(reactionValue);
+  reactionContinue.disabled = reactionValue < 1;
+  reactionContinue.classList.toggle('ready', reactionValue > 0);
+}
+function valueFromPointer(clientX) {
+  const rect = reactionTrack.getBoundingClientRect();
+  return ((clientX - rect.left) / rect.width) * 100;
+}
+function beginReaction(e) {
+  draggingReaction = true;
+  reactionKnob.classList.add('dragging');
+  reactionTrack.setPointerCapture?.(e.pointerId);
+  setReaction(valueFromPointer(e.clientX));
+}
+reactionTrack.addEventListener('pointerdown', beginReaction);
+reactionTrack.addEventListener('pointermove', e => {
+  if (!draggingReaction) return;
+  setReaction(valueFromPointer(e.clientX));
 });
-$("#keepMemory").addEventListener("click", () => {
-  showOnly("letterExperience");
-  activatePage(0);
+function endReaction() {
+  draggingReaction = false;
+  reactionKnob.classList.remove('dragging');
+}
+reactionTrack.addEventListener('pointerup', endReaction);
+reactionTrack.addEventListener('pointercancel', endReaction);
+
+reactionContinue.addEventListener('click', async () => {
+  if (!reactionValue) return;
+  const oldText = reactionContinue.querySelector('span').textContent;
+  reactionContinue.querySelector('span').textContent = 'SAVING YOUR REACTION…';
+  if (!ANSWER_ENDPOINT.includes('YOUR_EMAIL_HERE')) {
+    try {
+      await fetch(ANSWER_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({
+          name: 'Ayush',
+          page: 'Memory 00',
+          page_title: 'Polaroid Memory Reaction',
+          question: 'How much did this little memory make you smile?',
+          answer: reactionValue + '%',
+          _subject: 'Reaction to the little memory — ' + reactionValue + '%',
+          _captcha: 'false'
+        })
+      });
+    } catch (e) { /* The letter should still continue if email service is unavailable. */ }
+  }
+  reactionContinue.querySelector('span').textContent = oldText;
+  show('story');
+  activate(0);
 });
 
-const pages = $$(".letter-page");
-const total = pages.length;
-let current = 0;
-$("#totalPages").textContent = String(total).padStart(2,"0");
-
-function activatePage(index) {
+function activate(index) {
   current = Math.max(0, Math.min(total - 1, index));
-  pages.forEach((p,i)=>p.classList.toggle("active", i===current));
-  $("#currentPage").textContent = String(current+1).padStart(2,"0");
-  $("#prevBtn").disabled = current===0;
-  $("#nextBtn").textContent = current===total-1 ? "finish →" : "Next →";
-  $("#progressBar").style.width = `${((current+1)/total)*100}%`;
-  window.scrollTo({top:0, behavior:"smooth"});
+  pages.forEach((p,i) => p.classList.toggle('active', i === current));
+  $('#pageCurrent').textContent = String(current + 1).padStart(2,'0');
+  $('#progress').style.width = `${((current+1)/total)*100}%`;
+  $('#prev').disabled = current === 0;
+  $('#next').textContent = current === total - 1 ? 'finish →' : 'next →';
+  window.scrollTo({top:0, behavior:'smooth'});
 }
-$("#prevBtn").addEventListener("click", () => activatePage(current-1));
-$("#nextBtn").addEventListener("click", () => {
-  if (current < total-1) activatePage(current+1);
-  else showOnly("ending");
+
+function currentAnswer() {
+  return pages[current].querySelector('.answer-box').value.trim();
+}
+
+async function sendAnswer(pageIndex, answer) {
+  if (ANSWER_ENDPOINT.includes('YOUR_EMAIL_HERE')) {
+    toastMessage('One tiny setup: add your email in script.js → ANSWER_ENDPOINT.');
+    return false;
+  }
+  const page = pages[pageIndex];
+  const question = page.querySelector('h3').textContent.trim();
+  const pageTitle = page.querySelector('h2').textContent.trim();
+
+  const payload = {
+    name: 'Ayush',
+    page: `Memory ${String(pageIndex+1).padStart(2,'0')}`,
+    page_title: pageTitle,
+    question: question,
+    answer: answer,
+    _subject: `A little answer — Memory ${pageIndex+1}`,
+    _captcha: 'false'
+  };
+
+  try {
+    const response = await fetch(ANSWER_ENDPOINT, {
+      method:'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok || data.success === false) throw new Error('submit failed');
+    return true;
+  } catch (e) {
+    toastMessage('This answer could not be sent. Please try again.');
+    return false;
+  }
+}
+
+async function unlockNext() {
+  if (sending) return;
+  const answer = currentAnswer();
+  if (!answer) {
+    toastMessage('Give me one honest little answer before you turn the page ♡');
+    pages[current].querySelector('.answer-box').focus();
+    return;
+  }
+
+  sending = true;
+  const btn = pages[current].querySelector('.answer-btn');
+  btn.textContent = 'saving…';
+  const ok = await sendAnswer(current, answer);
+  if (!ok) {
+    btn.textContent = 'save & continue →';
+    sending = false;
+    return;
+  }
+
+  btn.classList.add('sent');
+  btn.textContent = 'saved ✓';
+  pages[current].querySelector('.answer-status').textContent = 'I got this one ♡';
+
+  setTimeout(() => {
+    if (current < total - 1) activate(current + 1);
+    else {
+      show('ending');
+      $('#successModal').classList.remove('hidden');
+    }
+    sending = false;
+  }, 550);
+}
+
+$$('.answer-btn').forEach(btn => btn.addEventListener('click', unlockNext));
+
+$('#prev').addEventListener('click', () => activate(current - 1));
+$('#next').addEventListener('click', unlockNext);
+
+$('#closeModal').addEventListener('click', () => $('#successModal').classList.add('hidden'));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') $('#successModal').classList.add('hidden');
 });
 
-const modal = $("#noteModal");
-const modalText = $("#modalText");
-$$(".secret-trigger").forEach((btn, i) => {
-  btn.addEventListener("click", () => {
-    const p = pages[i].querySelector("p");
-    const words = p.textContent.trim().split(/\s+/);
-    const snippet = words.slice(0, Math.min(22, words.length)).join(" ");
-    modalText.textContent = i % 3 === 0 ? "♡ " + snippet : snippet;
-    modal.classList.remove("hidden");
-  });
+// Small luxury cursor glow on desktop
+document.addEventListener('pointermove', e => {
+  const glow = document.querySelector('.cursor-glow');
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
 });
-function closeModal(){ modal.classList.add("hidden"); }
-$("#closeModal").addEventListener("click", closeModal);
-$("#modalContinue").addEventListener("click", closeModal);
-modal.addEventListener("click", e => { if(e.target === modal) closeModal(); });
-document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
 
-music.volume = 0.42;
-setMusicUI();
+activate(0);
+updateMusic();

@@ -2,255 +2,449 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#45070d">
-  <title>For you — a little letter</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#210207">
+  <meta name="description" content="A little letter, kept like a memory.">
+  <title>For You — a little letter</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Great+Vibes&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="grain"></div>
-  <div class="ambient" aria-hidden="true">
-    <span>♡</span><span>✦</span><span>♡</span><span>·</span><span>✦</span>
+  <div class="aurora"></div>
+  <div class="noise"></div>
+  <div class="cursor-glow"></div>
+
+  <div class="floating-hearts" aria-hidden="true">
+    <span>♡</span><span>✦</span><span>♡</span><span>·</span><span>✧</span><span>♡</span>
   </div>
 
-  <audio id="bgMusic" preload="metadata" loop>
-    <source src="assets/barbaad.mp3" type="audio/mpeg">
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="assets/Barbaad.mp3" type="audio/mpeg">
   </audio>
 
-  <button id="musicControl" class="music-control" type="button" aria-label="Play music">
-    <span class="vinyl">◉</span><span id="musicText">♫ Barbaad · paused</span>
+  <button id="musicButton" class="music-pill" type="button">
+    <span class="music-disc">◉</span>
+    <span id="musicLabel">sound off</span>
   </button>
 
+  <div id="toast" class="toast" aria-live="polite"></div>
+
   <main>
-    <section id="intro" class="screen intro-screen">
-      <div class="seal">♡</div>
-      <div class="eyebrow">a private little letter</div>
-      <h1>For you.</h1>
-      <p class="intro-line">I don't really know how to say all of this normally.</p>
-      <p class="intro-sub">So... I made this instead.</p>
-      <p class="music-hint">Maybe play this before you begin. ♫</p>
-      <button id="openBtn" class="primary-btn" type="button">PLAY &amp; OPEN <span>♡</span></button>
-    </section>
+    <!-- LUXURY COVER -->
+    <section id="cover" class="screen cover-screen">
+      <div class="cover-stars" aria-hidden="true">✦ &nbsp; · &nbsp; ✧ &nbsp; · &nbsp; ✦</div>
+      <div class="cover-kicker">A PRIVATE LITTLE THING</div>
 
-    <section id="rule" class="screen hidden">
-      <div class="rule-card">
-        <div class="tiny-label">one tiny rule</div>
-        <h2>Don't skip.</h2>
-        <p>And don't overthink what you read.</p>
-        <button id="okayBtn" class="outline-btn" type="button">okay ♡</button>
-      </div>
-    </section>
-
-    <section id="doors" class="screen hidden">
-      <div class="section-intro">
-        <div class="tiny-label">before the letter</div>
-        <h2>Three little things.</h2>
-        <p>Open any one. I promise, they're short.</p>
-      </div>
-      <div class="door-grid">
-        <button class="door" data-note="I just want to express what I'm feeling now... without any filter.">
-          <span class="door-icon">✦</span><span>Something I remember</span><small>open</small>
-        </button>
-        <button class="door" data-note="I feel free. When you are with me, I feel like a 5 yrs kid in front of you.">
-          <span class="door-icon">♡</span><span>Something I realised</span><small>open</small>
-        </button>
-        <button class="door" data-note="I still feel the same.">
-          <span class="door-icon">✉</span><span>Something I never said</span><small>open</small>
+      <div class="envelope-scene">
+        <div class="envelope-shadow"></div>
+        <button id="sealButton" class="envelope" type="button" aria-label="Open the letter">
+          <div class="envelope-flap"></div>
+          <div class="envelope-paper">
+            <span>for you</span>
+            <small>open when you're ready</small>
+          </div>
+          <div class="envelope-pocket"></div>
+          <div class="wax-seal">♡</div>
         </button>
       </div>
-      <div id="doorReveal" class="door-reveal" aria-live="polite"></div>
-      <button id="startLetter" class="primary-btn hidden" type="button">now, the real letter →</button>
+
+      <h1>There are things<br><em>I never said properly.</em></h1>
+      <p class="cover-sub">So I made you a little place to read them.</p>
+      <button id="beginButton" class="gold-button" type="button">
+        <span>OPEN THE LETTER</span><b>↗</b>
+      </button>
+      <div class="cover-note">headphones recommended · take your time</div>
     </section>
 
+    <!-- LITTLE INTERLUDE -->
+    <section id="interlude" class="screen hidden interlude-screen">
+      <div class="orbit">
+        <span class="orbit-heart">♡</span>
+      </div>
+      <div class="tiny-label">before we begin</div>
+      <h2>No scrolling required.</h2>
+      <p>Just one little page at a time.<br>And yes… I made you answer me too.</p>
+      <button id="beginStory" class="gold-button" type="button"><span>LET ME START →</span></button>
+    </section>
 
+    <!-- PHOTO MEMORY -->
     <section id="memory" class="screen hidden memory-screen">
-      <div class="memory-intro">
-        <div class="tiny-label">one little memory</div>
-        <h2>Wait… this one deserves a little space.</h2>
-        <p>I wanted to keep this moment.</p>
-      </div>
+      <div class="tiny-label">MEMORY 00 · KEEP THIS ONE</div>
+      <h2>Okay… this one is unfairly cute.</h2>
+      <p class="memory-lead">I couldn't put this somewhere ordinary.</p>
 
-      <button id="polaroid" class="polaroid" type="button" aria-label="Open this memory">
-        <span class="photo-frame">
-          <img src="assets/ayush-photo.jpeg" alt="A little memory">
-        </span>
-        <span class="polaroid-caption">you looked so cute here ♡</span>
+      <button id="polaroid" class="polaroid" type="button">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-photo"><img src="assets/ayush-photo.jpeg" alt="A little memory"></div>
+        <div class="polaroid-caption">you looked so cute here ♡</div>
+        <div class="polaroid-date">ONE OF MY FAVOURITE LITTLE MOMENTS</div>
       </button>
 
       <div id="memoryReveal" class="memory-reveal">
-        <p>Some moments are tiny… but somehow they stay.</p>
-        <button id="keepMemory" class="outline-btn" type="button">keep this memory →</button>
+        <span>✦</span>
+        <p>Some pictures are just pictures.<br>This one… isn't.</p>
+        <button id="memoryContinue" class="outline-button" type="button">keep this memory →</button>
       </div>
-      <p class="memory-hint">tap the photo</p>
     </section>
 
-    <section id="letterExperience" class="screen hidden letter-screen">
-      <div class="letter-top">
+    <!-- INSTAGRAM-STYLE REACTION SLIDER -->
+    <section id="reaction" class="screen hidden reaction-screen">
+      <div class="reaction-orbit" aria-hidden="true"><span id="reactionEmoji">😍</span></div>
+      <div class="tiny-label">BEFORE THE LETTER STARTS</div>
+      <h2>Okay… tell me honestly.</h2>
+      <p class="reaction-sub">How much did this little memory make you smile?</p>
+
+      <div class="reaction-card">
+        <div class="reaction-value"><strong id="reactionPercent">0%</strong><span>your reaction</span></div>
+        <div class="reaction-track-wrap">
+          <div class="reaction-track" id="reactionTrack">
+            <div class="reaction-fill" id="reactionFill"></div>
+            <div class="reaction-glow" id="reactionGlow"></div>
+            <div class="reaction-knob" id="reactionKnob">😍</div>
+          </div>
+        </div>
+        <div class="reaction-scale"><span>hmm…</span><span>okay cute</span><span>VERY CUTE</span></div>
+        <div class="reaction-message" id="reactionMessage">slide the little heart →</div>
+        <button id="reactionContinue" class="gold-button reaction-button" type="button" disabled><span>SHOW ME YOUR ANSWERS →</span></button>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section id="story" class="screen hidden story-screen">
+      <header class="story-header">
         <div>
-          <div class="tiny-label">a little something</div>
-          <h2>Okay... now I'll actually say it.</h2>
+          <div class="tiny-label">A LETTER, ONE MEMORY AT A TIME</div>
+          <div class="story-title">for Ayush <span>♡</span></div>
         </div>
-        <div class="page-counter"><span id="currentPage">01</span> / <span id="totalPages">17</span></div>
-      </div>
+        <div class="counter"><strong id="pageCurrent">01</strong><i>/</i><span>17</span></div>
+      </header>
 
-      <div class="paper-stack">
-        <div class="paper-shadow"></div>
-        <div id="letterPages" class="letter-pages">
+      <div class="progress-track"><span id="progress"></span></div>
 
-      <section class="letter-page" data-page="1">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 01</div>
+      <div id="storyPages" class="story-pages">
+        
+      <article class="story-page" data-page="1">
+        <div class="page-number">MEMORY 01</div>
+        <div class="page-flourish">✦</div>
         <h2>Before you read this</h2>
-        <p>Dheko jitna ho sakta hai utna… short likhne ki koshish karungi hai… I just want to express what I’m feeling now… hai na… offend mat hona, galat matlab mat nikalna, kuch bhi soch-samajh kar nahi likh rahi hu… bas jo dil se niklega woh bolungi, without any filter….</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="2">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 02</div>
-        <h2>The version of me you saw</h2>
-        <p>Ayush, I loved you the most… mai puri life me kabhi kisi se itna pyaar nahi kar sakti hu… YK, aapko hi dekhti hu mai badal jaati hu….. Maine mera aisa version kabhi kisi ke saamne nahi dekha… I feel free…. Jab bhi mere saath aap hote ho yaar… I feel like a 5 yrs kid in front of you……. Mujhe kabhi kisi ne aisa feel karwaya hi nahi yaar.. aap bolte ho na move on kar lo…. Aap batao na jis jagah mujhe itni khushi, itna sukoon, itna pyaar, itna comfort milta ho…. mai to nahi kar sakti yaar….</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="3">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 03</div>
-        <h2>Every version of you</h2>
-        <p>Maine na aapke har roop dekhe hai yaar…. Pyaar wala bhi dekha hai, gusse wala bhi aur pampering wala bhi…… Aur mujhe har roop se pyaar hai…… bas gusse wale me wajah koi ladki ya ladka na ho….. mai gussa bhi seh leti hu….. Aapme bhale lakho kamiya hai, galtiyan hai…. But mujhe woh kuch bhi nahi dikhti hai us feeling ke aage jo mere mann me aapke liye hai…..</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="4">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 04</div>
-        <h2>Things I never knew</h2>
-        <p>Seriously, mujhe idea bhi nahi tha yaarrrrr…. Ki aisa sab hota hai… maine kabhi experience nahi kiya yaar yeh sab… pata hai mujhe kabhi kisi ne bachha, baby karke bhi nahi bola hoga aaj tak, pamper to door… itni hi anjaan thi mai….</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="5">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 05</div>
-        <h2>My safe place</h2>
-        <p>Meri zindagi me maine pehli baar kisi ko apne aap ko kiss karne diya hai, touch karne diya hai.. aapko bhi pata hai jab mai aapse mili thi to in sab cheezon ke baare me nahi samajhti thi yaar….. Mujhe na mere relationship ke first month me woh pyaar, pampering mili thi na…. Mai zindagi me kabhi nahi ho sakti move on… I found my safe and comfort place….. mere liye ek hi tha, hamesha se ek hi rahega….. I cannot stop loving you ever……</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="6">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 06</div>
-        <h2>What I actually wanted</h2>
-        <p>Dheko, I know one-sided nahi tha… bas mai yeh chahti thi yaar ki jitna meri side se hai na, utna aapki side se bhi rahe… jaise aapko bhi mann kare baatein karne ka.. Matlab yeh hai yaar.. roz nahi mil pate the na, to isliye mujhe hota tha ki baatein karein….. Isliye mai irritate ho jaati thi ki poora din wait karu aur raat ko bhi so jaata hai… Bas isliye mai ladti thi yaar.. maine kabhi aapse breakup yeh sochkar kiya hi nahi ki hum breakup kar rahe hai… mai yeh sochkar karti thi ki mai naraz ho jaati hu, yeh mujhe manayega, pyaar karega.. but aisa kabhi hua hi nahi yaarrr… fir mai thak hi gayi….</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="7">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 07</div>
-        <h2>Why I used to fight</h2>
-        <p>Aapko pata hai na maine aapse kabhi kuch nahi manga tha, bas aise baat karne ke alawa… Mujhe pata nahi kyu bas vishwas hai…. Matlab mera dil kabhi yeh maanta hi nahi hai ki koi ladki meri wali jagah le legi… Matlab itna mujhe pata hai ki haan, talking stage me baatein karna… pasand aana… hota hai, yeh cheezein I understand ladko me.. like they can attract.. but they cannot love the same way…..</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="8">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 08</div>
-        <h2>The trust I still carry</h2>
-        <p>Pata nahi kyu aisa feel hota hai ki… matlab trust… mere liye jo jagah thi na aapke dil me, woh matlab waisi hi hai stilll… Bcz aap wahi same tone me baat karna, wahi same caring, woh sab kuch same… like jis tarah se aap dekhte the na mujhe, aaj bhi unhi aankhon se waise hi dekhte ho…. Aisa lagta hai use pata hai ki how much I love him…..</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="9">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 09</div>
-        <h2>What I still feel</h2>
-        <p>Mai kitna roti thi aapko kisi aur ke saath dekhkar… to aise andar se lagta hai ki woh nahi rulayegaaa…. Dheko, bolti to mai bhi nahi hu na… yaar, ki I love you…… Bcz koi commitment nahi hai… bcz ab hum dono ko hi commitment issues ho chuke hai….. Oh ya, I just want to express… yaa.. I still feel the same…</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="10">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 10</div>
-        <h2>What you mean to me</h2>
-        <p>Mera na pyaar na kabhi kam hua tha na hoga. And I trust… idk is it true or not, but aapki side se itna to hai ki… aapko yeh pata hai ki aapko bahot dil se pasand karti hu mai aur you know that ki maine bahot pyaar kiya hai aapse… even khudse bhi jyada…</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="11">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 11</div>
-        <h2>The one thing I gave</h2>
-        <p>Humara na khoon ka to rishta nahi hai yaar, but I consider you as my family….. Bcz you know, maine kabhi bhi aapko paraya nahi hone diya hai yaarrr……. Pata nahi mujhe aisi koi dusri ladki aati bhi hai na to yeh soch leti hu yaarrr…. Ki aayi hai to chali bhi jayegi… bcz jitna mai ladkiyon ko jaanti hu na, aajkal woh nahi tikti hai… Aapko itna jyada apnapan feel nahi karwa payegi… ki aap bhul hi jao mujhko.. itna mujhe andar se hota hai isliye kabhi maine…. un ladkiyon ko jo bhi judi hai.. unse aisa nahi laga merko ki yeh merko replace kar degi…..</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="12">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 12</div>
-        <h2>What I am asking now</h2>
-        <p>Mere paas ek hi dil tha, maine de diya…. Aap jo marzi karna karo, todo, rakho… pyaar dedo, kuch bhi karo……..</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="13">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 13</div>
-        <h2>The simplest truth</h2>
-        <p>Sensitive hu, overthinker hu, over-expect karti hu on the text.. I know meri kamiya… Baat rahi kisi bhi teesre ladke ki… 16 March 2024 se lekar aaj takkk kabhi kisi ke liye feel karna, attract hona to door, dekha bhi nahi hai kabhiiii….. Or kuch diya ho na diya, but I gave you 110% loyalty in this relationship….</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="14">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 14</div>
-        <h2>Just these little moments</h2>
-        <p>I love possessive Ayush….. but not ki galatfehmi me sab kuch hi khatam kar do.. Dheko, maine na try kiya hai ki mai understanding aur perfect banu.. ki aapko kabhi koi khayal me hi na aaye.. par pata nahi, nahi ho paa raha… yaarrr… but I love whatever is between us……</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="15">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 15</div>
-        <h2>A little more — 15</h2>
-        <p>Bas itna chahungi ab yeh matlab dosti hai ya kya hai, jo bhi hai aapki side se.. pls mat karna khatam ise…. Mujhe bahot rona aata hai yaarrr… nahi reh sakti mai bas… samjha dena, daant lena, lad lena but chhodkar mat jaana….. Pls…</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="16">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 16</div>
-        <h2>A little more — 16</h2>
-        <p>Mai bilkul expect nahi karti aap bolo na mai kuch intentions ke saath bol rahi hu… bas I feel… itni saari cheezein notice karne ke baad, to merko firse thoda aur pyaar aa gaya yaar…. Isliye bol rahi hu ki I really love you so much, Mr. Ayush Gupta… and nobody can love you jitna mai karti hu… nahi kar sakti sachhi… Koi ladki itni baar alag hone ke baad bhi apni self-respect se zyada pyaar nahi karegi……… And I love you a lot………</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
-      <section class="letter-page" data-page="17">
-        <div class="page-ornament">✦</div>
-        <div class="page-kicker">LETTER · 17</div>
-        <h2>A little more — 17</h2>
-        <p>And I was just missing these moments only… bas in chhote moments me hi khush hu main… ❤️</p>
-        <button class="secret-trigger" type="button" aria-label="Open a little note">♡</button>
-      </section>
+        <p class="letter-copy">Dheko jitna ho sakta hai utna… short likhne ki koshish karungi hai… I just want to express what I’m feeling now… hai na… offend mat hona, galat matlab mat nikalna, kuch bhi soch-samajh kar nahi likh rahi hu… bas jo dil se niklega woh bolungi, without any filter….</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>What did you feel when you read the very first line?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
         </div>
+      </article>
+
+      <article class="story-page" data-page="2">
+        <div class="page-number">MEMORY 02</div>
+        <div class="page-flourish">✦</div>
+        <h2>The version of me you saw</h2>
+        <p class="letter-copy">Ayush, I loved you the most… mai puri life me kabhi kisi se itna pyaar nahi kar sakti hu… YK, aapko hi dekhti hu mai badal jaati hu….. Maine mera aisa version kabhi kisi ke saamne nahi dekha… I feel free…. Jab bhi mere saath aap hote ho yaar… I feel like a 5 yrs kid in front of you……. Mujhe kabhi kisi ne aisa feel karwaya hi nahi yaar.. aap bolte ho na move on kar lo…. Aap batao na jis jagah mujhe itni khushi, itna sukoon, itna pyaar, itna comfort milta ho…. mai to nahi kar sakti yaar….</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>When I said I become a 5-year-old kid around you… what did you think?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="3">
+        <div class="page-number">MEMORY 03</div>
+        <div class="page-flourish">✦</div>
+        <h2>Every version of you</h2>
+        <p class="letter-copy">Maine na aapke har roop dekhe hai yaar…. Pyaar wala bhi dekha hai, gusse wala bhi aur pampering wala bhi…… Aur mujhe har roop se pyaar hai…… bas gusse wale me wajah koi ladki ya ladka na ho….. mai gussa bhi seh leti hu….. Aapme bhale lakho kamiya hai, galtiyan hai…. But mujhe woh kuch bhi nahi dikhti hai us feeling ke aage jo mere mann me aapke liye hai…..</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>Which version of you do you think I secretly love the most?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="4">
+        <div class="page-number">MEMORY 04</div>
+        <div class="page-flourish">✦</div>
+        <h2>Things I never knew</h2>
+        <p class="letter-copy">Seriously, mujhe idea bhi nahi tha yaarrrrr…. Ki aisa sab hota hai… maine kabhi experience nahi kiya yaar yeh sab… pata hai mujhe kabhi kisi ne bachha, baby karke bhi nahi bola hoga aaj tak, pamper to door… itni hi anjaan thi mai….</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>Do you remember one tiny moment when you made me feel really cared for?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="5">
+        <div class="page-number">MEMORY 05</div>
+        <div class="page-flourish">✦</div>
+        <h2>My safe place</h2>
+        <p class="letter-copy">Meri zindagi me maine pehli baar kisi ko apne aap ko kiss karne diya hai, touch karne diya hai.. aapko bhi pata hai jab mai aapse mili thi to in sab cheezon ke baare me nahi samajhti thi yaar….. Mujhe na mere relationship ke first month me woh pyaar, pampering mili thi na…. Mai zindagi me kabhi nahi ho sakti move on… I found my safe and comfort place….. mere liye ek hi tha, hamesha se ek hi rahega….. I cannot stop loving you ever……</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>When I called you my safe and comfort place… did you understand what I meant?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="6">
+        <div class="page-number">MEMORY 06</div>
+        <div class="page-flourish">✦</div>
+        <h2>What I actually wanted</h2>
+        <p class="letter-copy">Dheko, I know one-sided nahi tha… bas mai yeh chahti thi yaar ki jitna meri side se hai na, utna aapki side se bhi rahe… jaise aapko bhi mann kare baatein karne ka.. Matlab yeh hai yaar.. roz nahi mil pate the na, to isliye mujhe hota tha ki baatein karein….. Isliye mai irritate ho jaati thi ki poora din wait karu aur raat ko bhi so jaata hai… Bas isliye mai ladti thi yaar.. maine kabhi aapse breakup yeh sochkar kiya hi nahi ki hum breakup kar rahe hai… mai yeh sochkar karti thi ki mai naraz ho jaati hu, yeh mujhe manayega, pyaar karega.. but aisa kabhi hua hi nahi yaarrr… fir mai thak hi gayi….</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>Be honest — did you ever think I was fighting only because I wanted more time with you?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="7">
+        <div class="page-number">MEMORY 07</div>
+        <div class="page-flourish">✦</div>
+        <h2>Why I used to fight</h2>
+        <p class="letter-copy">Aapko pata hai na maine aapse kabhi kuch nahi manga tha, bas aise baat karne ke alawa… Mujhe pata nahi kyu bas vishwas hai…. Matlab mera dil kabhi yeh maanta hi nahi hai ki koi ladki meri wali jagah le legi… Matlab itna mujhe pata hai ki haan, talking stage me baatein karna… pasand aana… hota hai, yeh cheezein I understand ladko me.. like they can attract.. but they cannot love the same way…..</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>What do you think is the one thing I always wanted from you?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="8">
+        <div class="page-number">MEMORY 08</div>
+        <div class="page-flourish">✦</div>
+        <h2>The trust I still carry</h2>
+        <p class="letter-copy">Pata nahi kyu aisa feel hota hai ki… matlab trust… mere liye jo jagah thi na aapke dil me, woh matlab waisi hi hai stilll… Bcz aap wahi same tone me baat karna, wahi same caring, woh sab kuch same… like jis tarah se aap dekhte the na mujhe, aaj bhi unhi aankhon se waise hi dekhte ho…. Aisa lagta hai use pata hai ki how much I love him…..</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>Do you still recognise the way I look at you?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="9">
+        <div class="page-number">MEMORY 09</div>
+        <div class="page-flourish">✦</div>
+        <h2>What I still feel</h2>
+        <p class="letter-copy">Mai kitna roti thi aapko kisi aur ke saath dekhkar… to aise andar se lagta hai ki woh nahi rulayegaaa…. Dheko, bolti to mai bhi nahi hu na… yaar, ki I love you…… Bcz koi commitment nahi hai… bcz ab hum dono ko hi commitment issues ho chuke hai….. Oh ya, I just want to express… yaa.. I still feel the same…</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>If you had to describe what we are right now in one honest sentence, what would you say?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="10">
+        <div class="page-number">MEMORY 10</div>
+        <div class="page-flourish">✦</div>
+        <h2>What you mean to me</h2>
+        <p class="letter-copy">Mera na pyaar na kabhi kam hua tha na hoga. And I trust… idk is it true or not, but aapki side se itna to hai ki… aapko yeh pata hai ki aapko bahot dil se pasand karti hu mai aur you know that ki maine bahot pyaar kiya hai aapse… even khudse bhi jyada…</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>Did you ever realise how much of my heart I had actually given you?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="11">
+        <div class="page-number">MEMORY 11</div>
+        <div class="page-flourish">✦</div>
+        <h2>The one thing I gave</h2>
+        <p class="letter-copy">Humara na khoon ka to rishta nahi hai yaar, but I consider you as my family….. Bcz you know, maine kabhi bhi aapko paraya nahi hone diya hai yaarrr……. Pata nahi mujhe aisi koi dusri ladki aati bhi hai na to yeh soch leti hu yaarrr…. Ki aayi hai to chali bhi jayegi… bcz jitna mai ladkiyon ko jaanti hu na, aajkal woh nahi tikti hai… Aapko itna jyada apnapan feel nahi karwa payegi… ki aap bhul hi jao mujhko.. itna mujhe andar se hota hai isliye kabhi maine…. un ladkiyon ko jo bhi judi hai.. unse aisa nahi laga merko ki yeh merko replace kar degi…..</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>What is one thing about us that you don&#x27;t want to disappear?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="12">
+        <div class="page-number">MEMORY 12</div>
+        <div class="page-flourish">✦</div>
+        <h2>What I am asking now</h2>
+        <p class="letter-copy">Mere paas ek hi dil tha, maine de diya…. Aap jo marzi karna karo, todo, rakho… pyaar dedo, kuch bhi karo……..</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>When you read “samjha dena, daant lena, lad lena but chhodkar mat jaana”… what went through your mind?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="13">
+        <div class="page-number">MEMORY 13</div>
+        <div class="page-flourish">✦</div>
+        <h2>The simplest truth</h2>
+        <p class="letter-copy">Sensitive hu, overthinker hu, over-expect karti hu on the text.. I know meri kamiya… Baat rahi kisi bhi teesre ladke ki… 16 March 2024 se lekar aaj takkk kabhi kisi ke liye feel karna, attract hona to door, dekha bhi nahi hai kabhiiii….. Or kuch diya ho na diya, but I gave you 110% loyalty in this relationship….</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>If you could answer just one thing from everything I wrote, what would you answer?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="14">
+        <div class="page-number">MEMORY 14</div>
+        <div class="page-flourish">✦</div>
+        <h2>Just these little moments</h2>
+        <p class="letter-copy">I love possessive Ayush….. but not ki galatfehmi me sab kuch hi khatam kar do.. Dheko, maine na try kiya hai ki mai understanding aur perfect banu.. ki aapko kabhi koi khayal me hi na aaye.. par pata nahi, nahi ho paa raha… yaarrr… but I love whatever is between us……</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>And finally… after reading all of this, what do you want me to know?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="15">
+        <div class="page-number">MEMORY 15</div>
+        <div class="page-flourish">✦</div>
+        <h2>A little more — 15</h2>
+        <p class="letter-copy">Bas itna chahungi ab yeh matlab dosti hai ya kya hai, jo bhi hai aapki side se.. pls mat karna khatam ise…. Mujhe bahot rona aata hai yaarrr… nahi reh sakti mai bas… samjha dena, daant lena, lad lena but chhodkar mat jaana….. Pls…</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>One honest thing — what came to your mind here?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="16">
+        <div class="page-number">MEMORY 16</div>
+        <div class="page-flourish">✦</div>
+        <h2>A little more — 16</h2>
+        <p class="letter-copy">Mai bilkul expect nahi karti aap bolo na mai kuch intentions ke saath bol rahi hu… bas I feel… itni saari cheezein notice karne ke baad, to merko firse thoda aur pyaar aa gaya yaar…. Isliye bol rahi hu ki I really love you so much, Mr. Ayush Gupta… and nobody can love you jitna mai karti hu… nahi kar sakti sachhi… Koi ladki itni baar alag hone ke baad bhi apni self-respect se zyada pyaar nahi karegi……… And I love you a lot………</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>One honest thing — what came to your mind here?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="story-page" data-page="17">
+        <div class="page-number">MEMORY 17</div>
+        <div class="page-flourish">✦</div>
+        <h2>A little more — 17</h2>
+        <p class="letter-copy">And I was just missing these moments only… bas in chhote moments me hi khush hu main… ❤️</p>
+
+        <div class="question-card">
+          <div class="question-eyebrow">before you turn the page</div>
+          <h3>One honest thing — what came to your mind here?</h3>
+          <textarea class="answer-box" rows="3" placeholder="write whatever comes to your mind…"></textarea>
+          <div class="question-footer">
+            <span class="answer-status">one honest answer ♡</span>
+            <button class="answer-btn" type="button">save &amp; continue →</button>
+          </div>
+        </div>
+      </article>
+
       </div>
 
-      <div class="letter-nav">
-        <button id="prevBtn" class="nav-btn" type="button">← Previous</button>
-        <div class="progress"><span id="progressBar"></span></div>
-        <button id="nextBtn" class="nav-btn" type="button">Next →</button>
+      <div class="story-nav">
+        <button id="prev" class="nav-button" type="button">← back</button>
+        <div class="nav-hint"><span id="navDot"></span> answer to unlock the next page</div>
+        <button id="next" class="nav-button" type="button">next →</button>
       </div>
-      <p class="tap-hint">there's a little ♡ on some pages</p>
     </section>
 
+    <!-- FINAL MEMORY -->
     <section id="ending" class="screen hidden ending-screen">
-      <div class="final-memory">
-        <div class="tiny-label">one last little thing</div>
-        <div class="ending-polaroid">
-          <img src="assets/ayush-photo.jpeg" alt="One last little memory">
-          <div>bas in chhote moments me hi khush hu main… ♡</div>
-        </div>
+      <div class="tiny-label">YOU MADE IT TO THE LAST PAGE</div>
+      <div class="ending-title">That's all I wanted<br><em>you to know.</em></div>
+
+      <div class="ending-polaroid">
+        <div class="ending-photo"><img src="assets/ayush-photo.jpeg" alt="A little memory"></div>
+        <div class="ending-caption">bas in chhote moments me hi khush hu main… ♡</div>
       </div>
-      <div class="tiny-label">the end, for now</div>
-      <h2>That's all.</h2>
-      <p>I just wanted you to know.</p>
-      <div class="signature">with all the things I couldn't say normally</div>
+
+      <p class="ending-line">Thank you for reading it all.</p>
+      <div class="final-seal">♡</div>
     </section>
   </main>
 
-  <div id="noteModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div id="successModal" class="modal hidden">
     <div class="modal-card">
-      <button id="closeModal" class="close-modal" type="button" aria-label="Close">×</button>
-      <div class="modal-heart">♡</div>
-      <p id="modalText"></p>
-      <button id="modalContinue" class="outline-btn" type="button">keep reading →</button>
+      <div class="modal-symbol">♡</div>
+      <div class="tiny-label">one last thing</div>
+      <h2>Your answers are on their way.</h2>
+      <p>I kept every little answer together. You can close this now.</p>
+      <button id="closeModal" class="gold-button" type="button"><span>CLOSE THE LETTER</span></button>
     </div>
   </div>
 
