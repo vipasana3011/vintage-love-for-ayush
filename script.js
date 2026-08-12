@@ -24,7 +24,7 @@ const total = pages.length;
 function show(id) {
   ['cover','interlude','memory','reaction','story','ending'].forEach(name => {
     const el = document.getElementById(name);
-    el.classList.toggle('hidden', name !== id);
+    if (el) el.classList.toggle('hidden', name !== id);
   });
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -57,7 +57,7 @@ async function startMusic() {
 
 music.addEventListener('play', updateMusic);
 music.addEventListener('pause', updateMusic);
-music.addEventListener('error', () => toastMessage('I cannot find Barbaad.mp3 in the assets folder.'));
+music?.addEventListener('error', () => { musicLabel.textContent = 'music unavailable'; });
 
 musicButton.addEventListener('click', async () => {
   if (music.paused) await startMusic();
@@ -65,22 +65,26 @@ musicButton.addEventListener('click', async () => {
 });
 
 // Cover: SAME user click starts audio + opens. No fragile second click.
-async function openCover() {
+function openCover(e) {
+  if (e) e.preventDefault();
   const cover = $('#cover');
+  if (!cover) return;
   cover.classList.add('opening');
-  await startMusic();
-  setTimeout(() => show('interlude'), 700);
+  // Do not wait for audio. Some browsers keep an audio promise pending when
+  // the file is missing; the page must NEVER get stuck because of music.
+  startMusic();
+  setTimeout(() => show('interlude'), 650);
 }
-$('#beginButton').addEventListener('click', openCover);
-$('#sealButton').addEventListener('click', openCover);
-$('#beginStory').addEventListener('click', () => show('memory'));
+$('#beginButton')?.addEventListener('click', openCover);
+$('#sealButton')?.addEventListener('click', openCover);
+$('#beginStory')?.addEventListener('click', e => { e.preventDefault(); show('memory'); });
 
 // Polaroid
-$('#polaroid').addEventListener('click', () => {
+$('#polaroid')?.addEventListener('click', () => {
   $('#polaroid').classList.add('opened');
   $('#memoryReveal').classList.add('show');
 });
-$('#memoryContinue').addEventListener('click', () => {
+$('#memoryContinue')?.addEventListener('click', () => {
   show('reaction');
   setReaction(0);
 });
@@ -137,8 +141,8 @@ function beginReaction(e) {
   reactionTrack.setPointerCapture?.(e.pointerId);
   setReaction(valueFromPointer(e.clientX));
 }
-reactionTrack.addEventListener('pointerdown', beginReaction);
-reactionTrack.addEventListener('pointermove', e => {
+reactionTrack?.addEventListener('pointerdown', beginReaction);
+reactionTrack?.addEventListener('pointermove', e => {
   if (!draggingReaction) return;
   setReaction(valueFromPointer(e.clientX));
 });
@@ -146,10 +150,10 @@ function endReaction() {
   draggingReaction = false;
   reactionKnob.classList.remove('dragging');
 }
-reactionTrack.addEventListener('pointerup', endReaction);
-reactionTrack.addEventListener('pointercancel', endReaction);
+reactionTrack?.addEventListener('pointerup', endReaction);
+reactionTrack?.addEventListener('pointercancel', endReaction);
 
-reactionContinue.addEventListener('click', async () => {
+reactionContinue?.addEventListener('click', async () => {
   if (!reactionValue) return;
   const oldText = reactionContinue.querySelector('span').textContent;
   reactionContinue.querySelector('span').textContent = 'SAVING YOUR REACTION…';
@@ -276,3 +280,77 @@ document.addEventListener('pointermove', e => {
 
 activate(0);
 updateMusic();
+
+
+// FINAL VOICE NOTE
+// Put your recording at: assets/my-voice.mp3
+const voiceNote = $('#voiceNote');
+const voicePlay = $('#voicePlay');
+const voiceCard = $('#voiceNoteCard');
+const voiceProgress = $('#voiceProgress');
+const voiceTime = $('#voiceTime');
+const voiceHint = $('#voiceHint');
+
+function formatAudioTime(seconds) {
+  if (!Number.isFinite(seconds)) return '00:00';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+async function playVoiceNote() {
+  if (!voiceNote) return;
+  // The voice note takes over. Barbaad pauses here and comes back automatically.
+  music.pause();
+  voiceNote.currentTime = 0;
+  try {
+    await voiceNote.play();
+    voiceCard.classList.add('playing');
+    voiceHint.textContent = 'voice note playing · Barbaad is waiting ♡';
+  } catch (e) {
+    toastMessage('I cannot find assets/my-voice.mp3 — add your voice note there first.');
+  }
+}
+
+function toggleVoiceNote() {
+  if (voiceNote.paused) {
+    playVoiceNote();
+  } else {
+    voiceNote.pause();
+  }
+}
+
+if (voicePlay && voiceNote) {
+  voicePlay.addEventListener('click', toggleVoiceNote);
+  voiceNote.addEventListener('loadedmetadata', () => {
+    voiceTime.textContent = '00:00 / ' + formatAudioTime(voiceNote.duration);
+  });
+  voiceNote.addEventListener('timeupdate', () => {
+    const pct = voiceNote.duration ? (voiceNote.currentTime / voiceNote.duration) * 100 : 0;
+    voiceProgress.style.width = pct + '%';
+    voiceTime.textContent = formatAudioTime(voiceNote.currentTime) + ' / ' + formatAudioTime(voiceNote.duration);
+  });
+  voiceNote.addEventListener('play', () => {
+    music.pause();
+    voiceCard.classList.add('playing');
+  });
+  voiceNote.addEventListener('pause', () => {
+    voiceCard.classList.remove('playing');
+  });
+  voiceNote.addEventListener('ended', async () => {
+    voiceCard.classList.remove('playing');
+    voiceProgress.style.width = '100%';
+    voiceHint.textContent = 'that was the last little thing ♡';
+    // Bring Barbaad back softly after the voice note ends.
+    try {
+      await music.play();
+      updateMusic();
+      toastMessage('…and Barbaad is back ♡');
+    } catch (e) {
+      updateMusic();
+    }
+  });
+  voiceNote.addEventListener('error', () => {
+    voiceHint.textContent = 'add assets/my-voice.mp3 to hear this little note';
+  });
+}
